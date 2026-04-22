@@ -33,7 +33,6 @@ describe('prisma environment', () => {
   });
 
   it('makes prismaTestContext available and wires teardown', async () => {
-    vi.stubEnv('DATABASE_URL', 'postgres://fake');
     const result = await environment.setup(global, {
       prisma: options,
     });
@@ -49,11 +48,5 @@ describe('prisma environment', () => {
     await result.teardown(global);
 
     expect(teardownMock).toHaveBeenCalledOnce();
-  });
-
-  it('throws without databaseUrl', async () => {
-    await expect(
-      environment.setup(global, { 'wrong-option-key': options }),
-    ).rejects.toThrow('no DATABASE_URL defined!');
   });
 });

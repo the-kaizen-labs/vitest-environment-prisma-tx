@@ -12,10 +12,6 @@ const environment: Environment = {
   async setup(global, opts: Record<string, any>) {
     const options: PrismaEnvironmentOptions = opts[environmentName] ?? {};
 
-    if (!process.env.DATABASE_URL) {
-      throw new Error('no DATABASE_URL defined!');
-    }
-
     const ctx = await createContext(options);
     await ctx.setup();
 
