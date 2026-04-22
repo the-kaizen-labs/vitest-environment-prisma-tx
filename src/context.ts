@@ -1,6 +1,5 @@
 import { isAbsolute, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { PrismaPg } from '@prisma/adapter-pg';
 import type {
   PrismaClientLike,
   PrismaEnvironmentOptions,
@@ -35,11 +34,17 @@ export async function createContext(options: PrismaEnvironmentOptions) {
    */
   let internalEndTestTransaction: (() => void) | null = null;
 
-  const { PrismaClient } = await import(
-    resolveModuleSpecifier(options.clientPath)
-  );
+  const [{ PrismaClient }, adapterModule] = await Promise.all([
+    import(resolveModuleSpecifier(options.clientPath)),
+    import(resolveModuleSpecifier(options.adapterPath)),
+  ]);
+
+  const adapterExport = adapterModule.default;
+  const adapter =
+    typeof adapterExport === 'function' ? await adapterExport() : adapterExport;
+
   const originalClient: PrismaClientLike = new PrismaClient({
-    adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
+    adapter,
     log: options.log,
   });
 

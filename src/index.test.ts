@@ -25,6 +25,7 @@ describe('prisma environment', () => {
   const global: any = {};
   const options = {
     clientPath: './test/prisma-client-stub.js',
+    adapterPath: './test/prisma-adapter-stub.js',
   };
 
   beforeEach(() => {
