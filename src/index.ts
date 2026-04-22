@@ -10,7 +10,7 @@ const environment: Environment = {
   viteEnvironment: 'ssr',
 
   async setup(global, opts: Record<string, any>) {
-    const options: PrismaEnvironmentOptions = opts[environmentName] ?? {};
+    const options: PrismaEnvironmentOptions = opts[environmentName];
 
     const ctx = await createContext(options);
     await ctx.setup();
