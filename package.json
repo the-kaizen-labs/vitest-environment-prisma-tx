@@ -1,61 +1,61 @@
 {
-  "name": "vitest-environment-prisma-postgres",
+  "name": "vitest-prisma",
   "version": "1.0.1",
+  "description": "Vitest environment for Prisma designed for fast integration tests: seed your database once with production-like data, then run each test in a transaction that is rolled back after execution. Tests remain isolated without expensive reseeding.",
+  "keywords": [
+    "prisma",
+    "prisma orm",
+    "test",
+    "test isolation",
+    "testing",
+    "transaction",
+    "vitest"
+  ],
   "license": "MIT",
   "author": "Christoph Werner <christoph@codepunkt.de>",
-  "description": "Vitest environment for Prisma & PostgreSQL designed for fast integration tests: seed your database once with production-like data, then run each test in a transaction that is rolled back after execution. Tests remain isolated without expensive reseeding.",
-  "type": "module",
-  "packageManager": "pnpm@10.27.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/codepunkt/vitest-environment-prisma-postgres"
+    "url": "https://github.com/the-kaizen-labs/vitest-prisma"
   },
-  "engines": {
-    "node": ">=20"
-  },
-  "scripts": {
-    "build": "tsup",
-    "format": "biome format --write",
-    "format:check": "biome format",
-    "lint": "biome lint",
-    "prepare": "husky",
-    "release": "dotenv -e .env -- release-it",
-    "test": "vitest run --coverage",
-    "typecheck": "tsc --noEmit"
-  },
-  "keywords": [
-    "vitest",
-    "prisma",
-    "postgres",
-    "prisma orm",
-    "postgesql",
-    "test",
-    "testing",
-    "test isolation",
-    "transaction"
+  "files": [
+    "CHANGELOG.md",
+    "dist"
   ],
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
-      "import": "./dist/index.js"
+      "import": "./dist/index.mjs"
     },
     "./setup": {
-      "require": "./dist/setup.js",
-      "import": "./dist/setup.js"
+      "import": "./dist/setup.mjs"
     }
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "changeset": "changeset",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "oxlint",
+    "prepare": "husky",
+    "release": "pnpm run build && changeset publish",
+    "test": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "version": "changeset version && pnpm install --lockfile-only"
+  },
   "devDependencies": {
-    "@biomejs/biome": "2.3.10",
+    "@changesets/cli": "2.30.0",
     "@prisma/adapter-pg": "7.2.0",
-    "@release-it/conventional-changelog": "10.0.4",
     "@types/node": "24.10.4",
     "@vitest/coverage-v8": "4.0.16",
-    "dotenv-cli": "11.0.0",
     "husky": "9.1.7",
+    "oxfmt": "0.46.0",
+    "oxlint": "1.61.0",
     "prisma": "7.2.0",
-    "release-it": "19.2.2",
-    "tsup": "8.5.1",
+    "tsdown": "0.21.7",
     "typescript": "5.9.3",
     "vitest": "4.0.16"
   },
@@ -64,8 +64,8 @@
     "prisma": ">=4 <8",
     "vitest": ">=4 <5"
   },
-  "files": [
-    "CHANGELOG.md",
-    "dist"
-  ]
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@10.27.0"
 }

@@ -2,19 +2,19 @@ import { createRequire } from 'node:module';
 import { PrismaPg } from '@prisma/adapter-pg';
 import type {
   PrismaClientLike,
-  PrismaPostgresEnvironmentOptions,
+  PrismaEnvironmentOptions,
 } from './dts/index.js';
 
 const require = createRequire(import.meta.url);
 
 /**
- * Creates the test context used by the `prisma-postgres` Vitest environment.
+ * Creates the test context used by the `prisma` Vitest environment.
  *
- * @param options PrismaPostgresEnvironmentOptions
+ * @param options PrismaEnvironmentOptions
  * @returns The test context object used by both the Vitest environment and the
  * user's Prisma client mock.
  */
-export function createContext(options: PrismaPostgresEnvironmentOptions) {
+export function createContext(options: PrismaEnvironmentOptions) {
   let savePointCounter = 0;
 
   /**
@@ -62,7 +62,7 @@ export function createContext(options: PrismaPostgresEnvironmentOptions) {
     // if tx wasn't defined, the guard condition in client proxy would've thrown
     const tx = transactionClient!;
 
-    const savePointId = `vitest_environment_prisma_postgres_${++savePointCounter}`;
+    const savePointId = `vitest_prisma_${++savePointCounter}`;
     await tx.$executeRawUnsafe?.(`SAVEPOINT ${savePointId};`);
 
     const run = () => (Array.isArray(arg) ? Promise.all(arg) : arg(tx!));
@@ -90,7 +90,7 @@ export function createContext(options: PrismaPostgresEnvironmentOptions) {
       if (!transactionClient) {
         throw new Error(
           [
-            'prismaPostgresTestContext.client was accessed outside of an active test transaction.',
+            'prismaTestContext.client was accessed outside of an active test transaction.',
             'This usually means that test.setupFiles is not configured correctly.',
           ].join('\n'),
         );
@@ -128,7 +128,7 @@ export function createContext(options: PrismaPostgresEnvironmentOptions) {
   const beginTestTransaction = async () => {
     if (transactionClient !== null) {
       throw new Error(
-        '[vitest-environment-prisma-postgres] beginTestTransaction called while a test transaction is already active. ' +
+        '[vitest-prisma] beginTestTransaction called while a test transaction is already active. ' +
           'This usually indicates misconfigured hooks (beforeEach/afterEach) or concurrent tests using the same context.',
       );
     }

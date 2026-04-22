@@ -1,9 +1,9 @@
 {
-  "biome.enabled": true,
+  "oxc.enable": true,
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "biomejs.biome",
+  "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.codeActionsOnSave": {
-    "source.fixAll.biome": "always"
+    "source.fixAll.oxc": "always"
   },
   "editor.indentSize": 2
 }

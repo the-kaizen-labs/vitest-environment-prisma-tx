@@ -21,7 +21,7 @@ vi.mock('vitest/environments', () => {
 
 import environment from '../src/index.js';
 
-describe('prisma-postgres environment', () => {
+describe('prisma environment', () => {
   const global: any = {};
   const options = {
     clientPath: '../test/prisma-client-stub.js',
@@ -31,12 +31,12 @@ describe('prisma-postgres environment', () => {
     vi.unstubAllEnvs();
   });
 
-  it('makes prismaPostgresTestContext available and wires teardown', async () => {
+  it('makes prismaTestContext available and wires teardown', async () => {
     vi.stubEnv('DATABASE_URL', 'postgres://fake');
     const result = await environment.setup(global, {
-      'prisma-postgres': options,
+      prisma: options,
     });
-    const ctx = global.prismaPostgresTestContext;
+    const ctx = global.prismaTestContext;
 
     expect(nodeSetupMock).toHaveBeenCalledOnce();
     expect(ctx).toBeDefined();

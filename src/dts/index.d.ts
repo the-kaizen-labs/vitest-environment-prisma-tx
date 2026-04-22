@@ -1,5 +1,5 @@
 declare global {
-  var prismaPostgresTestContext: {
+  var prismaTestContext: {
     beginTestTransaction: () => Promise<void>;
     client: PrismaClientLike;
     endTestTransaction: () => void;
@@ -25,7 +25,7 @@ interface TransactionOptions {
   isolationLevel?: any;
 }
 
-export interface PrismaPostgresEnvironmentOptions {
+export interface PrismaEnvironmentOptions {
   /** Path to your Prisma client. */
   clientPath: string;
   /** Database url (optional). Read from `process.env.DATABASE_URL` otherwise. */

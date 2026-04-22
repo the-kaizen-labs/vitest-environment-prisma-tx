@@ -60,12 +60,12 @@ describe('createContext', () => {
     expect(() =>
       transactionPendingContext.client.$transaction(async () => {}),
     ).toThrow(
-      /prismaPostgresTestContext\.client was accessed outside of an active test transaction/,
+      /prismaTestContext\.client was accessed outside of an active test transaction/,
     );
     expect(() =>
       transactionEndedContext.client.$transaction(async () => {}),
     ).toThrow(
-      /prismaPostgresTestContext\.client was accessed outside of an active test transaction/,
+      /prismaTestContext\.client was accessed outside of an active test transaction/,
     );
   });
 
@@ -95,13 +95,11 @@ describe('createContext', () => {
 
     expect(prisma.$executeRawUnsafe).toHaveBeenNthCalledWith(
       1,
-      expect.stringMatching(/^SAVEPOINT vitest_environment_prisma_postgres_/),
+      expect.stringMatching(/^SAVEPOINT vitest_prisma_/),
     );
     expect(prisma.$executeRawUnsafe).toHaveBeenNthCalledWith(
       2,
-      expect.stringMatching(
-        /^RELEASE SAVEPOINT vitest_environment_prisma_postgres_/,
-      ),
+      expect.stringMatching(/^RELEASE SAVEPOINT vitest_prisma_/),
     );
   });
 
@@ -116,13 +114,11 @@ describe('createContext', () => {
 
     expect(prisma.$executeRawUnsafe).toHaveBeenNthCalledWith(
       1,
-      expect.stringMatching(/^SAVEPOINT vitest_environment_prisma_postgres_/),
+      expect.stringMatching(/^SAVEPOINT vitest_prisma_/),
     );
     expect(prisma.$executeRawUnsafe).toHaveBeenNthCalledWith(
       2,
-      expect.stringMatching(
-        /^ROLLBACK TO SAVEPOINT vitest_environment_prisma_postgres_/,
-      ),
+      expect.stringMatching(/^ROLLBACK TO SAVEPOINT vitest_prisma_/),
     );
   });
 

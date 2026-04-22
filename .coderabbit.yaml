@@ -1,4 +1,0 @@
-review:
-  auto_review: true
-  skip_users:
-    - "renovate"

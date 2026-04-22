@@ -1,6 +1,6 @@
-# Contributing to vitest-environment-prisma-postgres
+# Contributing to vitest-prisma
 
-Thank you for considering contributing to vitest-environment-prisma-postgres! Whether you're fixing a typo, reporting a bug, or proposing a new feature, your contribution helps make database testing faster and easier for the entire Vitest and Prisma community. This is a small project maintained in limited time, and every contribution is genuinely appreciated.
+Thank you for considering contributing to vitest-prisma! Whether you're fixing a typo, reporting a bug, or proposing a new feature, your contribution helps make database testing faster and easier for the entire Vitest and Prisma community. This is a small project maintained in limited time, and every contribution is genuinely appreciated.
 
 ## How You Can Contribute
 
@@ -31,7 +31,7 @@ When reporting a bug, please include:
   - Package version
   - Vitest version
   - Prisma version
-  - PostgreSQL version
+  - Database adapter and version (e.g. `@prisma/adapter-pg`)
 - **Error messages** or stack traces if applicable
 
 The more details you provide, the easier it is to understand and fix the issue.
@@ -48,9 +48,11 @@ The more details you provide, the easier it is to understand and fix the issue.
 1. **Fork the repository** on GitHub
 
 2. **Clone your fork** locally:
+
    ```bash
-   git clone https://github.com/YOUR_USERNAME/vitest-environment-prisma-postgres.git
-   cd vitest-environment-prisma-postgres
+   git clone https://github.com/YOUR_USERNAME/vitest-prisma.git
+   # then add the upstream remote (the-kaizen-labs/vitest-prisma)
+   cd vitest-prisma
    ```
 
 3. **Install dependencies**:
@@ -69,7 +71,7 @@ All tests must pass before submitting a pull request.
 
 ### Code Quality Checks
 
-This project uses [Biome](https://biomejs.dev/) for linting and formatting:
+This project uses [Oxlint](https://oxc.rs/docs/guide/usage/linter) for linting and [Oxfmt](https://oxc.rs/docs/guide/usage/formatter) for formatting:
 
 ```bash
 pnpm run lint                  # Check for linting issues
@@ -104,6 +106,7 @@ For **small fixes** (typos, small bug fixes, documentation improvements), feel f
 ### Creating a Pull Request
 
 1. **Create a feature branch** from `main`:
+
    ```bash
    git checkout -b feat/your-feature-name
    # or
@@ -119,6 +122,7 @@ For **small fixes** (typos, small bug fixes, documentation improvements), feel f
 3. **Commit your changes** following our [commit message guidelines](#commit-message-guidelines)
 
 4. **Push to your fork**:
+
    ```bash
    git push origin feat/your-feature-name
    ```
@@ -141,52 +145,25 @@ For **small fixes** (typos, small bug fixes, documentation improvements), feel f
 - Once approved, your PR will be merged using "Squash and Merge"
 - Your contribution will be included in the next release with automated changelog generation
 
-## Commit Message Guidelines
+## Changesets
 
-This project uses [Conventional Commits](https://www.conventionalcommits.org/) for automated changelog generation and semantic versioning.
-
-### Format
-
-```
-<type>: <description>
-```
-
-### Types
-
-Based on the project's release configuration, use one of these types:
-
-- `feat:` - New features (appears in changelog as ✨ **New Features**)
-- `fix:` - Bug fixes (appears in changelog as 🐛 **Bug Fixes**)
-- `docs:` - Documentation changes (appears in changelog as 📚 **Documentation**)
-- `perf:` - Performance improvements (appears in changelog as 🚀 **Performance**)
-- `ci:` - CI/CD changes (appears in changelog as ⚙️ **CI**)
-- `test:` - Test additions or changes (not in changelog)
-- `refactor:` - Code refactoring (not in changelog)
-- `chore:` - Maintenance tasks (not in changelog)
-- `build:` - Build system changes (not in changelog)
-
-### Examples
+This project uses [Changesets](https://github.com/changesets/changesets) for changelog generation and versioning. If your PR contains a user-facing change (a feature, fix, or breaking change), add a changeset:
 
 ```bash
-feat: add support for nested transactions
-fix: prevent memory leak in transaction rollback
-docs: clarify setup instructions for Testcontainers
-perf: optimize transaction initialization
-test: add tests for edge cases in rollback logic
-refactor: simplify client creation logic
+pnpm changeset
 ```
 
-Include a detailed description in the commit body explaining:
-- What changed
-- Why it changed
-- How to migrate from the old behavior
+Pick the appropriate semver bump (`patch` / `minor` / `major`) and write a short summary that will land in the public changelog. Commit the generated file in `.changeset/` along with your PR.
 
-### Tips
+Internal-only changes (refactors, tests, CI tweaks) don't need a changeset.
 
-- **Keep it concise**: The description should be clear and to the point
-- **Use imperative mood**: "add feature" not "added feature" or "adds feature"
-- **Don't capitalize** the first letter of the description
-- **No period** at the end of the description
+## Commit Message Guidelines
+
+Commit messages are not parsed for releases (Changesets owns that), but please keep them readable:
+
+- Use imperative mood: "add feature" not "added feature"
+- Keep the summary line short and descriptive
+- Add a body when the change needs context or migration notes
 
 ## Testing Guidelines
 
@@ -224,10 +201,10 @@ describe('MyFeature', () => {
 ## Getting Help
 
 - **Usage questions?** Check the [README](./README.md) first
-- **Found a bug?** [Open an issue](https://github.com/codepunkt/vitest-environment-prisma-postgres/issues/new)
-- **Want to discuss a feature?** [Open an issue](https://github.com/codepunkt/vitest-environment-prisma-postgres/issues/new) for discussion
+- **Found a bug?** [Open an issue](https://github.com/the-kaizen-labs/vitest-prisma/issues/new)
+- **Want to discuss a feature?** [Open an issue](https://github.com/the-kaizen-labs/vitest-prisma/issues/new) for discussion
 - **General questions?** Feel free to start a discussion or comment on relevant issues
 
 ## License
 
-By contributing to vitest-environment-prisma-postgres, you agree that your contributions will be licensed under the [MIT License](./LICENSE).
+By contributing to vitest-prisma, you agree that your contributions will be licensed under the [MIT License](./LICENSE).

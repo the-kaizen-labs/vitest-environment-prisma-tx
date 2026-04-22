@@ -1,17 +1,16 @@
 import type { Environment } from 'vitest/environments';
 import { builtinEnvironments } from 'vitest/environments';
 import { createContext } from './context.js';
-import type { PrismaPostgresEnvironmentOptions } from './dts/index.js';
+import type { PrismaEnvironmentOptions } from './dts/index.js';
 
-const environmentName = 'prisma-postgres';
+const environmentName = 'prisma';
 
 const environment: Environment = {
   name: environmentName,
   viteEnvironment: 'ssr',
 
   async setup(global, opts: Record<string, any>) {
-    const options: PrismaPostgresEnvironmentOptions =
-      opts[environmentName] ?? {};
+    const options: PrismaEnvironmentOptions = opts[environmentName] ?? {};
 
     if (!process.env.DATABASE_URL) {
       throw new Error('no DATABASE_URL defined!');
@@ -21,7 +20,7 @@ const environment: Environment = {
     await ctx.setup();
 
     // make context available globally for setupFiles.
-    global.prismaPostgresTestContext = ctx;
+    global.prismaTestContext = ctx;
 
     const { teardown: nodeEnvironmentTeardown } =
       await builtinEnvironments.node.setup(global, {});
