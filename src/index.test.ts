@@ -24,7 +24,8 @@ import environment from '../src/index.js';
 describe('prisma environment', () => {
   const global: any = {};
   const options = {
-    clientPath: '../test/prisma-client-stub.js',
+    clientPath: './test/prisma-client-stub.js',
+    adapterPath: './test/prisma-adapter-stub.js',
   };
 
   beforeEach(() => {
@@ -32,7 +33,6 @@ describe('prisma environment', () => {
   });
 
   it('makes prismaTestContext available and wires teardown', async () => {
-    vi.stubEnv('DATABASE_URL', 'postgres://fake');
     const result = await environment.setup(global, {
       prisma: options,
     });
@@ -48,11 +48,5 @@ describe('prisma environment', () => {
     await result.teardown(global);
 
     expect(teardownMock).toHaveBeenCalledOnce();
-  });
-
-  it('throws without databaseUrl', async () => {
-    await expect(
-      environment.setup(global, { 'wrong-option-key': options }),
-    ).rejects.toThrow('no DATABASE_URL defined!');
   });
 });

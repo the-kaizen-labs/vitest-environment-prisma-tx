@@ -60,7 +60,7 @@ Then, ensure that the required peer dependencies are available. This library req
 
 - `vitest` in version `4.x`
 - `prisma` in version `7.x`
-- A Prisma driver adapter for your database (e.g. `@prisma/adapter-pg` for PostgreSQL)
+- Any Prisma driver adapter your database supports, installed as a direct dependency — e.g. `@prisma/adapter-pg` for PostgreSQL, `@prisma/adapter-planetscale` for PlanetScale, `@prisma/adapter-d1` for Cloudflare D1, etc.
 
 #### Step 3: Enable and configure the environment in your Vitest config
 
@@ -74,8 +74,10 @@ export default defineConfig({
     environment: 'prisma',
     environmentOptions: {
       prisma: {
-        // You must configure the path to your prisma client.
+        // Path to your Prisma client.
         clientPath: './generated/prisma-client',
+        // Path to the adapter module created in Step 4.
+        adapterPath: './vitest.prisma-adapter.ts',
       },
     },
     setupFiles: [
@@ -88,18 +90,43 @@ export default defineConfig({
 });
 ```
 
-#### Step 4: Provide a `DATABASE_URL`
+#### Step 4: Create an adapter module
 
-This environment will create the Prisma client and adapter for your tests, so it has to know the connection string to your test database.
+Create a small module that default-exports your Prisma driver adapter. The export can be either an adapter instance or a factory (sync or async) that returns one. The module's default export must be the adapter itself (or a factory returning one) — do not export the adapter class directly.
 
-You provide it by running your tests with a `DATABASE_URL` environment variable, which must point to a database your Prisma adapter can talk to. For PostgreSQL, it can point to:
+```ts
+// vitest.prisma-adapter.ts
+import { PrismaPg } from '@prisma/adapter-pg';
+export default () =>
+  new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+```
+
+For dynamic setups (e.g. a Testcontainers-managed database), use an async factory:
+
+```ts
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PostgreSqlContainer } from '@testcontainers/postgresql';
+
+export default async () => {
+  const container = await new PostgreSqlContainer().start();
+  return new PrismaPg({ connectionString: container.getConnectionUri() });
+};
+```
+
+Point `adapterPath` at this module from your Vitest config.
+
+#### Step 5: Provide a connection string
+
+Your adapter module is responsible for telling the Prisma driver adapter how to reach your test database. The most common pattern is to read `process.env.DATABASE_URL` inside the adapter module and run your tests with that variable set, but you can also use a literal string, a Testcontainers-provisioned URL (see Step 4), or any other dynamic source.
+
+For PostgreSQL the connection string can point to:
 
 - a real local PostgreSQL instance
 - a docker-compose container
-- a Testcontainers-created instance (see below)
-- a cloud-hosted PostgreSQL instance, e.g, Supabase or Prisma Postgres
+- a Testcontainers-created instance (see Step 4)
+- a cloud-hosted PostgreSQL instance, e.g. Supabase or Prisma Postgres
 
-#### Step 5: Mock Prisma client
+#### Step 6: Mock Prisma client
 
 In your setupFile, `vitest.setup.ts`, mock your local Prisma client with the client provided by this environment:
 
@@ -115,7 +142,7 @@ This ensures that your application code uses the Prisma client created by the te
 
 Please make sure that you're mocking exactly the module path that your code is using to import your Prisma client.
 
-#### Step 6: Seed once per test run
+#### Step 7: Seed once per test run
 
 Make sure to seed your test database at the beginning of every test run.
 

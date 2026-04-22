@@ -1,11 +1,14 @@
-import { createRequire } from 'node:module';
-import { PrismaPg } from '@prisma/adapter-pg';
+import { isAbsolute, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import type {
   PrismaClientLike,
   PrismaEnvironmentOptions,
 } from './dts/index.js';
 
-const require = createRequire(import.meta.url);
+const resolveModuleSpecifier = (specifier: string): string => {
+  const isPathLike = specifier.startsWith('.') || isAbsolute(specifier);
+  return isPathLike ? pathToFileURL(resolve(specifier)).href : specifier;
+};
 
 /**
  * Creates the test context used by the `prisma` Vitest environment.
@@ -14,7 +17,7 @@ const require = createRequire(import.meta.url);
  * @returns The test context object used by both the Vitest environment and the
  * user's Prisma client mock.
  */
-export function createContext(options: PrismaEnvironmentOptions) {
+export async function createContext(options: PrismaEnvironmentOptions) {
   let savePointCounter = 0;
 
   /**
@@ -31,9 +34,17 @@ export function createContext(options: PrismaEnvironmentOptions) {
    */
   let internalEndTestTransaction: (() => void) | null = null;
 
-  const { PrismaClient } = require(options.clientPath);
+  const [{ PrismaClient }, adapterModule] = await Promise.all([
+    import(resolveModuleSpecifier(options.clientPath)),
+    import(resolveModuleSpecifier(options.adapterPath)),
+  ]);
+
+  const adapterExport = adapterModule.default;
+  const adapter =
+    typeof adapterExport === 'function' ? await adapterExport() : adapterExport;
+
   const originalClient: PrismaClientLike = new PrismaClient({
-    adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
+    adapter,
     log: options.log,
   });
 

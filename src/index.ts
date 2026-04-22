@@ -10,13 +10,9 @@ const environment: Environment = {
   viteEnvironment: 'ssr',
 
   async setup(global, opts: Record<string, any>) {
-    const options: PrismaEnvironmentOptions = opts[environmentName] ?? {};
+    const options: PrismaEnvironmentOptions = opts[environmentName];
 
-    if (!process.env.DATABASE_URL) {
-      throw new Error('no DATABASE_URL defined!');
-    }
-
-    const ctx = createContext(options);
+    const ctx = await createContext(options);
     await ctx.setup();
 
     // make context available globally for setupFiles.

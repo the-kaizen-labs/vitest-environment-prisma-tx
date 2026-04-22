@@ -1,28 +1,22 @@
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   type PrismaClient as PrismaClientStub,
   prismaClientStubInstances,
 } from '../test/prisma-client-stub.js';
+import { prismaAdapterStubInstances } from '../test/prisma-adapter-stub.js';
 import { createContext } from './context.js';
-
-const { PrismaPgMock } = vi.hoisted(() => {
-  const PrismaPgMock = vi.fn();
-  return { PrismaPgMock };
-});
-
-vi.mock('@prisma/adapter-pg', () => ({
-  PrismaPg: PrismaPgMock,
-}));
 
 const makeContext = async (
   transaction:
     | 'transactionPending'
     | 'transactionStarted'
     | 'transactionEnded' = 'transactionPending',
-): Promise<[ReturnType<typeof createContext>, PrismaClientStub]> => {
-  const context = createContext({
-    clientPath: '../test/prisma-client-stub.js',
-    databaseUrl: 'postgres://fake',
+): Promise<[Awaited<ReturnType<typeof createContext>>, PrismaClientStub]> => {
+  const context = await createContext({
+    clientPath: './test/prisma-client-stub.js',
+    adapterPath: './test/prisma-adapter-stub.js',
     log: ['query'],
     transactionOptions: { timeout: 123 },
   });
@@ -38,15 +32,84 @@ const makeContext = async (
 
 describe('createContext', () => {
   beforeEach(() => {
-    PrismaPgMock.mockClear();
     vi.unstubAllEnvs();
   });
 
-  it('creates PrismaClient with PrismaPg adapter', async () => {
+  it('creates the Prisma client with an adapter from adapterPath', async () => {
     vi.stubEnv('DATABASE_URL', 'postgres://fake');
     const [ctx] = await makeContext();
 
-    expect(PrismaPgMock).toHaveBeenCalledWith({
+    expect(prismaAdapterStubInstances.at(-1)?.options).toEqual({
+      connectionString: 'postgres://fake',
+    });
+
+    await ctx.teardown();
+  });
+
+  it('accepts an adapter module whose default export is an instance', async () => {
+    vi.stubEnv('DATABASE_URL', 'postgres://fake');
+    const ctx = await createContext({
+      clientPath: './test/prisma-client-stub.js',
+      adapterPath: './test/prisma-adapter-stub-instance.js',
+      log: ['query'],
+      transactionOptions: { timeout: 123 },
+    });
+    await ctx.setup();
+
+    const latest = prismaAdapterStubInstances.at(-1);
+    expect(latest?.options).toEqual({ instanceForm: true });
+
+    await ctx.teardown();
+  });
+
+  it('awaits async adapter factories from adapterPath', async () => {
+    vi.stubEnv('DATABASE_URL', 'postgres://fake');
+    const ctx = await createContext({
+      clientPath: './test/prisma-client-stub.js',
+      adapterPath: './test/prisma-adapter-stub-async.js',
+      log: ['query'],
+      transactionOptions: { timeout: 123 },
+    });
+    await ctx.setup();
+
+    const latest = prismaAdapterStubInstances.at(-1);
+    expect(latest?.options).toEqual({ asyncFactory: true });
+
+    await ctx.teardown();
+  });
+
+  it('accepts an absolute file:// URL as adapterPath', async () => {
+    vi.stubEnv('DATABASE_URL', 'postgres://fake');
+    const adapterFileUrl = pathToFileURL(
+      resolve('./test/prisma-adapter-stub.js'),
+    ).href;
+    const ctx = await createContext({
+      clientPath: './test/prisma-client-stub.js',
+      adapterPath: adapterFileUrl,
+      log: ['query'],
+      transactionOptions: { timeout: 123 },
+    });
+    await ctx.setup();
+
+    expect(prismaAdapterStubInstances.at(-1)?.options).toEqual({
+      connectionString: 'postgres://fake',
+    });
+
+    await ctx.teardown();
+  });
+
+  it('accepts an absolute file:// URL as clientPath', async () => {
+    vi.stubEnv('DATABASE_URL', 'postgres://fake');
+    const fileUrl = pathToFileURL(resolve('./test/prisma-client-stub.js')).href;
+    const ctx = await createContext({
+      clientPath: fileUrl,
+      adapterPath: './test/prisma-adapter-stub.js',
+      log: ['query'],
+      transactionOptions: { timeout: 123 },
+    });
+    await ctx.setup();
+
+    expect(prismaAdapterStubInstances.at(-1)?.options).toEqual({
       connectionString: 'postgres://fake',
     });
 

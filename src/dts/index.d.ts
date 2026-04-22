@@ -26,12 +26,20 @@ interface TransactionOptions {
 }
 
 export interface PrismaEnvironmentOptions {
-  /** Path to your Prisma client. */
+  /** Path to your Prisma client. Accepts relative paths, absolute paths, file:// URLs, or bare module specifiers. */
   clientPath: string;
-  /** Database url (optional). Read from `process.env.DATABASE_URL` otherwise. */
-  databaseUrl?: string;
+  /** Path to a module that default-exports a Prisma driver adapter (instance or factory). Same path resolution as clientPath. */
+  adapterPath: string;
   /** Pass prisma loglevels to log to stdout. to log everything, pass `['query', 'info', 'warn', 'error']`. */
   log?: string[];
   /** Allows to set options for the test transactions. Default values are defined by Prisma. */
   transactionOptions?: TransactionOptions;
 }
+
+export type PrismaDriverAdapter = unknown;
+export type PrismaAdapterFactory = () =>
+  | PrismaDriverAdapter
+  | Promise<PrismaDriverAdapter>;
+export type PrismaAdapterModule = {
+  default: PrismaDriverAdapter | PrismaAdapterFactory;
+};
