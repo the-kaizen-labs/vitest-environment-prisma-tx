@@ -40,6 +40,7 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
     "prepare": "husky",
     "release": "pnpm run build && changeset publish",
     "test": "vitest run --coverage",
