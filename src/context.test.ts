@@ -46,6 +46,58 @@ describe('createContext', () => {
     await ctx.teardown();
   });
 
+  it('accepts an adapter module whose default export is an instance', async () => {
+    vi.stubEnv('DATABASE_URL', 'postgres://fake');
+    const ctx = await createContext({
+      clientPath: './test/prisma-client-stub.js',
+      adapterPath: './test/prisma-adapter-stub-instance.js',
+      log: ['query'],
+      transactionOptions: { timeout: 123 },
+    });
+    await ctx.setup();
+
+    const latest = prismaAdapterStubInstances.at(-1);
+    expect(latest?.options).toEqual({ instanceForm: true });
+
+    await ctx.teardown();
+  });
+
+  it('awaits async adapter factories from adapterPath', async () => {
+    vi.stubEnv('DATABASE_URL', 'postgres://fake');
+    const ctx = await createContext({
+      clientPath: './test/prisma-client-stub.js',
+      adapterPath: './test/prisma-adapter-stub-async.js',
+      log: ['query'],
+      transactionOptions: { timeout: 123 },
+    });
+    await ctx.setup();
+
+    const latest = prismaAdapterStubInstances.at(-1);
+    expect(latest?.options).toEqual({ asyncFactory: true });
+
+    await ctx.teardown();
+  });
+
+  it('accepts an absolute file:// URL as adapterPath', async () => {
+    vi.stubEnv('DATABASE_URL', 'postgres://fake');
+    const adapterFileUrl = pathToFileURL(
+      resolve('./test/prisma-adapter-stub.js'),
+    ).href;
+    const ctx = await createContext({
+      clientPath: './test/prisma-client-stub.js',
+      adapterPath: adapterFileUrl,
+      log: ['query'],
+      transactionOptions: { timeout: 123 },
+    });
+    await ctx.setup();
+
+    expect(prismaAdapterStubInstances.at(-1)?.options).toEqual({
+      connectionString: 'postgres://fake',
+    });
+
+    await ctx.teardown();
+  });
+
   it('accepts an absolute file:// URL as clientPath', async () => {
     vi.stubEnv('DATABASE_URL', 'postgres://fake');
     const fileUrl = pathToFileURL(resolve('./test/prisma-client-stub.js')).href;
