@@ -21,7 +21,7 @@ vi.mock('vitest/environments', () => {
 
 import environment from '../src/index.js';
 
-describe('prisma environment', () => {
+describe('prisma-tx environment', () => {
   const global: any = {};
   const options = {
     clientPath: './test/prisma-client-stub.js',
@@ -34,7 +34,7 @@ describe('prisma environment', () => {
 
   it('makes prismaTestContext available and wires teardown', async () => {
     const result = await environment.setup(global, {
-      prisma: options,
+      'prisma-tx': options,
     });
     const ctx = global.prismaTestContext;
 

@@ -1,8 +1,8 @@
 <div align="center">
-  <h1>vitest-prisma</h1>
-  <a href="https://www.npmjs.com/package/vitest-prisma"><img src="https://img.shields.io/npm/v/vitest-prisma.svg?style=flat" /></a>
-  <a href="https://github.com/the-kaizen-labs/vitest-prisma/blob/main/.github/CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" /></a>
-  <a href="https://github.com/the-kaizen-labs/vitest-prisma/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" /></a>
+  <h1>vitest-environment-prisma-tx</h1>
+  <a href="https://www.npmjs.com/package/vitest-environment-prisma-tx"><img src="https://img.shields.io/npm/v/vitest-environment-prisma-tx.svg?style=flat" /></a>
+  <a href="https://github.com/the-kaizen-labs/vitest-environment-prisma-tx/blob/main/.github/CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" /></a>
+  <a href="https://github.com/the-kaizen-labs/vitest-environment-prisma-tx/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" /></a>
   <br />
   <br />
   <a href="#features">Features</a>
@@ -48,11 +48,13 @@ The examples below use [`@prisma/adapter-pg`](https://www.npmjs.com/package/@pri
 
 #### Step 1: Install the environment
 
-First, install the environnment:
+Install the package as a dev dependency:
 
 ```shell
-npm install vitest-prisma --save-dev
+npm install vitest-environment-prisma-tx --save-dev
 ```
+
+The package is named `vitest-environment-prisma-tx` so Vitest can resolve it from the `environment: 'prisma-tx'` setting in your config — Vitest looks up custom environments as `vitest-environment-<name>` ([Vitest docs](https://vitest.dev/guide/environment.html#custom-environment)).
 
 #### Step 2: Ensure peer dependency availability
 
@@ -71,9 +73,9 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    environment: 'prisma',
+    environment: 'prisma-tx',
     environmentOptions: {
-      prisma: {
+      'prisma-tx': {
         // Path to your Prisma client.
         clientPath: './generated/prisma-client',
         // Path to the adapter module created in Step 4.
@@ -82,7 +84,7 @@ export default defineConfig({
     },
     setupFiles: [
       // Registers hooks that start and roll back a database transaction around every test.
-      'vitest-prisma/setup',
+      'vitest-environment-prisma-tx/setup',
       // This is where you mock your Prisma client to use the test environment's client.
       './vitest.setup.ts',
     ],
@@ -138,7 +140,7 @@ vi.mock('./generated/prisma-client', () => ({
 }));
 ```
 
-This ensures that your application code uses the Prisma client created by the test environment. Combined with the `vitest-prisma/setup` file, which starts and rolls back a transaction around every test, this means all Prisma queries from your code run inside an isolated transaction per test.
+This ensures that your application code uses the Prisma client created by the test environment. Combined with the `vitest-environment-prisma-tx/setup` file, which starts and rolls back a transaction around every test, this means all Prisma queries from your code run inside an isolated transaction per test.
 
 Please make sure that you're mocking exactly the module path that your code is using to import your Prisma client.
 
@@ -153,7 +155,7 @@ If you are using TypeScript, make sure to add this environment to your `compiler
 ```json
 {
   "compilerOptions": {
-    "types": ["node", "vitest/globals", "vitest-prisma"]
+    "types": ["node", "vitest/globals", "vitest-environment-prisma-tx"]
   }
 }
 ```
@@ -177,7 +179,7 @@ vi.mock('./generated/prisma-client', () => ({
 }));
 ```
 
-Adding `"vitest-prisma"` to `compilerOptions.types` ensures that the global declaration is loaded and the mock is type-safe.
+Adding `"vitest-environment-prisma-tx"` to `compilerOptions.types` ensures that the global declaration is loaded and the mock is type-safe.
 
 ## Known limitations
 

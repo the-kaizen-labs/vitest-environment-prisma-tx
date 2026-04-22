@@ -1,6 +1,6 @@
-# Contributing to vitest-prisma
+# Contributing to vitest-environment-prisma-tx
 
-Thank you for considering contributing to vitest-prisma! Whether you're fixing a typo, reporting a bug, or proposing a new feature, your contribution helps make database testing faster and easier for the entire Vitest and Prisma community. This is a small project maintained in limited time, and every contribution is genuinely appreciated.
+Thank you for considering contributing to vitest-environment-prisma-tx! Whether you're fixing a typo, reporting a bug, or proposing a new feature, your contribution helps make database testing faster and easier for the entire Vitest and Prisma community. This is a small project maintained in limited time, and every contribution is genuinely appreciated.
 
 ## How You Can Contribute
 
@@ -50,9 +50,9 @@ The more details you provide, the easier it is to understand and fix the issue.
 2. **Clone your fork** locally:
 
    ```bash
-   git clone https://github.com/YOUR_USERNAME/vitest-prisma.git
-   # then add the upstream remote (the-kaizen-labs/vitest-prisma)
-   cd vitest-prisma
+   git clone https://github.com/YOUR_USERNAME/vitest-environment-prisma-tx.git
+   # then add the upstream remote (the-kaizen-labs/vitest-environment-prisma-tx)
+   cd vitest-environment-prisma-tx
    ```
 
 3. **Install dependencies**:
@@ -201,10 +201,10 @@ describe('MyFeature', () => {
 ## Getting Help
 
 - **Usage questions?** Check the [README](./README.md) first
-- **Found a bug?** [Open an issue](https://github.com/the-kaizen-labs/vitest-prisma/issues/new)
-- **Want to discuss a feature?** [Open an issue](https://github.com/the-kaizen-labs/vitest-prisma/issues/new) for discussion
+- **Found a bug?** [Open an issue](https://github.com/the-kaizen-labs/vitest-environment-prisma-tx/issues/new)
+- **Want to discuss a feature?** [Open an issue](https://github.com/the-kaizen-labs/vitest-environment-prisma-tx/issues/new) for discussion
 - **General questions?** Feel free to start a discussion or comment on relevant issues
 
 ## License
 
-By contributing to vitest-prisma, you agree that your contributions will be licensed under the [MIT License](./LICENSE).
+By contributing to vitest-environment-prisma-tx, you agree that your contributions will be licensed under the [MIT License](./LICENSE).

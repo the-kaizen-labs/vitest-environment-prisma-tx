@@ -6,7 +6,7 @@ import type { PrismaEnvironmentOptions } from './dts/index.js';
 
 import { createContext } from './context.js';
 
-const environmentName = 'prisma';
+const environmentName = 'prisma-tx';
 
 const environment: Environment = {
   name: environmentName,

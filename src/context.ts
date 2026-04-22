@@ -140,7 +140,7 @@ export async function createContext(options: PrismaEnvironmentOptions) {
   const beginTestTransaction = async () => {
     if (transactionClient !== null) {
       throw new Error(
-        '[vitest-prisma] beginTestTransaction called while a test transaction is already active. ' +
+        '[vitest-environment-prisma-tx] beginTestTransaction called while a test transaction is already active. ' +
           'This usually indicates misconfigured hooks (beforeEach/afterEach) or concurrent tests using the same context.',
       );
     }

@@ -8,7 +8,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}-release
 
 jobs:
   release:
-    if: github.repository == 'the-kaizen-labs/vitest-prisma'
+    if: github.repository == 'the-kaizen-labs/vitest-environment-prisma-tx'
     name: Release
     runs-on: ubuntu-latest
     permissions:
