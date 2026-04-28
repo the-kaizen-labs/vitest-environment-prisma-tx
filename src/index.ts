@@ -1,6 +1,6 @@
-import type { Environment } from 'vitest/environments';
+import type { Environment } from 'vitest/runtime';
 
-import { builtinEnvironments } from 'vitest/environments';
+import { builtinEnvironments } from 'vitest/runtime';
 
 import type { PrismaEnvironmentOptions } from './dts/index.js';
 
