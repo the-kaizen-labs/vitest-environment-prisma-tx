@@ -60,7 +60,8 @@ The package is named `vitest-environment-prisma-tx` so Vitest can resolve it fro
 
 Then, ensure that the required peer dependencies are available. This library requires that you have all of the following installed in your project:
 
-- `vitest` in version `4.x`
+- `vitest` in version `4.x` or `5.x`. Vitest 5 requires Node.js 22.12 or newer;
+  Vitest 4 remains available on Node.js 20.
 - `prisma` in version `7.x`
 - Any Prisma driver adapter your database supports, installed as a direct dependency — e.g. `@prisma/adapter-pg` for PostgreSQL, `@prisma/adapter-planetscale` for PlanetScale, `@prisma/adapter-d1` for Cloudflare D1, etc.
 
