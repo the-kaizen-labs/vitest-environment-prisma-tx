@@ -1,10 +1,21 @@
-import type { Environment } from 'vitest/environments';
-
-import { builtinEnvironments } from 'vitest/environments';
+import type { Environment } from 'vitest/runtime';
 
 import type { PrismaEnvironmentOptions } from './dts/index.js';
 
 import { createContext } from './context.js';
+
+// Vitest 4.0 predates the runtime export; preserve its environment entry point.
+const legacySpecifier = 'vitest/environments';
+const { builtinEnvironments } = await import('vitest/runtime').catch(
+  (error) => {
+    if (
+      error.code !== 'ERR_PACKAGE_PATH_NOT_EXPORTED' ||
+      !error.message.includes("'./runtime'")
+    )
+      throw error;
+    return import(legacySpecifier);
+  },
+);
 
 const environmentName = 'prisma-tx';
 

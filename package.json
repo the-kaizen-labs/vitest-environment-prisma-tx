@@ -44,6 +44,7 @@
     "prepare": "husky",
     "release": "pnpm run build && changeset publish",
     "test": "vitest run --coverage",
+    "test:package": "node scripts/test-package.mjs",
     "typecheck": "tsc --noEmit",
     "version": "changeset version && pnpm install --lockfile-only"
   },
@@ -62,7 +63,7 @@
   },
   "peerDependencies": {
     "prisma": ">=4 <8",
-    "vitest": ">=4 <5"
+    "vitest": ">=4 <6"
   },
   "lint-staged": {
     "*.{js,ts}": [
