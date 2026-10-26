@@ -1,5 +1,5 @@
 {
-  "name": "vitest-environment-prisma-tx",
+  "name": "@the-kaizen-labs/vitest-environment-prisma-tx",
   "version": "1.1.0",
   "description": "Vitest environment for Prisma designed for fast integration tests: seed your database once with production-like data, then run each test in a transaction that is rolled back after execution. Tests remain isolated without expensive reseeding.",
   "keywords": [
@@ -32,7 +32,8 @@
     }
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
     "build": "tsdown",

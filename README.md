@@ -1,6 +1,6 @@
 <div align="center">
-  <h1>vitest-environment-prisma-tx</h1>
-  <a href="https://www.npmjs.com/package/vitest-environment-prisma-tx"><img src="https://img.shields.io/npm/v/vitest-environment-prisma-tx.svg?style=flat" /></a>
+  <h1>@the-kaizen-labs/vitest-environment-prisma-tx</h1>
+  <a href="https://github.com/the-kaizen-labs/vitest-environment-prisma-tx/packages">GitHub Packages</a>
   <a href="https://github.com/the-kaizen-labs/vitest-environment-prisma-tx/blob/main/.github/CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" /></a>
   <a href="https://github.com/the-kaizen-labs/vitest-environment-prisma-tx/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" /></a>
   <br />
@@ -48,13 +48,42 @@ The examples below use [`@prisma/adapter-pg`](https://www.npmjs.com/package/@pri
 
 #### Step 1: Install the environment
 
-Install the package as a dev dependency:
+The package is distributed through GitHub Packages, not public npm. Add this
+registry mapping to your project's `.npmrc`:
 
-```shell
-npm install vitest-environment-prisma-tx --save-dev
+```ini
+@the-kaizen-labs:registry=https://npm.pkg.github.com
 ```
 
-The package is named `vitest-environment-prisma-tx` so Vitest can resolve it from the `environment: 'prisma-tx'` setting in your config — Vitest looks up custom environments as `vitest-environment-<name>` ([Vitest docs](https://vitest.dev/guide/environment.html#custom-environment)).
+GitHub requires authentication even for public packages. Configure a personal
+access token (classic) with `read:packages` in your **user-level** `.npmrc`, never
+in the repository. For example, with `GITHUB_PACKAGES_TOKEN` set in your shell:
+
+```ini
+//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}
+```
+
+Install using the existing dependency name as an alias:
+
+```shell
+pnpm add -D vitest-environment-prisma-tx@npm:@the-kaizen-labs/vitest-environment-prisma-tx
+```
+
+The alias preserves `environment: 'prisma-tx'`, setup imports and global type
+references in existing consumers. Vitest resolves this environment name as
+`vitest-environment-prisma-tx`. The unscoped package on public npm is a separate
+distribution and does not receive these GitHub Packages releases.
+
+In GitHub Actions, grant the consuming repository read access under the package's
+**Manage Actions access** settings. For Taproot, add `the-kaizen-labs/taproot`.
+Its installation jobs need `packages: read` and a user-level registry credential
+provided by `actions/setup-node` with `registry-url: https://npm.pkg.github.com`,
+`scope: '@the-kaizen-labs'`, and `NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}` on
+the install step. A repository's token does not automatically read another
+repository's package.
+
+See [GitHub's npm registry documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry)
+for authentication and package permissions.
 
 #### Step 2: Ensure peer dependency availability
 
@@ -181,6 +210,41 @@ vi.mock('./generated/prisma-client', () => ({
 ```
 
 Adding `"vitest-environment-prisma-tx"` to `compilerOptions.types` ensures that the global declaration is loaded and the mock is type-safe.
+
+## Direct scoped installation
+
+Consumers that do not need the legacy dependency alias can install the scoped
+name instead:
+
+```shell
+pnpm add -D @the-kaizen-labs/vitest-environment-prisma-tx
+```
+
+For both Vitest 4 and 5, resolve the environment's entry point explicitly rather
+than relying on the unscoped `vitest-environment-<name>` lookup:
+
+```ts
+import { fileURLToPath } from 'node:url';
+
+const environment = fileURLToPath(
+  import.meta.resolve('@the-kaizen-labs/vitest-environment-prisma-tx'),
+);
+```
+
+Set `test.environment` to `environment`, change the setup import to
+`@the-kaizen-labs/vitest-environment-prisma-tx/setup`, and use
+`@the-kaizen-labs/vitest-environment-prisma-tx` in `compilerOptions.types`.
+The `environmentOptions['prisma-tx']` key and `prismaTestContext` global remain
+unchanged.
+
+## Releases
+
+Changesets opens a version PR after a release note is merged into `main`.
+Merging that version PR runs validation and publishes the scoped package to
+GitHub Packages using the repository's `GITHUB_TOKEN` with `packages: write`.
+No npm publishing token is required. Package visibility and consuming-repository
+Actions access are managed in the GitHub package settings after its first
+publication.
 
 ## Known limitations
 
